@@ -4,223 +4,158 @@ import {
   Ship,
   Anchor,
   TrendingUp,
-  AlertTriangle,
-  IndianRupee,
-  CheckCircle
+  Package,
+  DollarSign,
+  ShieldCheck,
+  CheckCircle,
 } from "lucide-react";
 
 function AIRecommendations() {
-
-  const [form, setForm] = useState({
-    cargo: "Coal",
-    quantity: 50000,
-    origin: "Australia",
-    destination: "Krishnapatnam"
-  });
-
-  const [result, setResult] = useState(null);
-
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    });
-  };
+  const [cargo, setCargo] = useState("Coal");
+  const [quantity, setQuantity] = useState("");
+  const [origin, setOrigin] = useState("");
+  const [recommendation, setRecommendation] = useState(null);
 
   const generateRecommendation = () => {
+    if (!quantity || !origin) {
+      alert("Please enter cargo quantity and origin.");
+      return;
+    }
 
-    const quantity = Number(form.quantity);
+    const qty = Number(quantity);
 
-    // Freight Forecast Demo
-    const currentRate = 25.40;
-    const predictedRate = quantity > 70000 ? 30.20 : 28.70;
+    let vessel = "50K DWT";
+    let port = "Krishnapatnam";
+    let freight = "$28.70";
+    let saving = "₹40 Lakhs";
+    let confidence = "94%";
 
-    // Vessel Recommendation
-    let vessel;
-    let vesselCapacity;
-
-    if (quantity <= 35000) {
-      vessel = "35K DWT";
-      vesselCapacity = 35000;
-    } else if (quantity <= 50000) {
-      vessel = "50K DWT";
-      vesselCapacity = 50000;
-    } else {
+    if (qty > 70000) {
       vessel = "70K DWT";
-      vesselCapacity = 70000;
+      port = "Visakhapatnam";
+      freight = "$30.20";
+      saving = "₹52 Lakhs";
+      confidence = "91%";
+    } else if (qty <= 35000) {
+      vessel = "35K DWT";
+      port = "Ennore";
+      freight = "$27.90";
+      saving = "₹25 Lakhs";
+      confidence = "93%";
     }
 
-    const utilization =
-      ((quantity / vesselCapacity) * 100).toFixed(1);
-
-    // Risk Calculation
-    let risk = "Medium";
-
-    if (quantity > 70000) {
-      risk = "High";
-    } else if (quantity < 30000) {
-      risk = "Low";
-    }
-
-    // Main AI Decision
-    let action;
-    let explanation;
-
-    if (predictedRate > currentRate && risk !== "High") {
-
-      action = "Charter Vessel Early";
-
-      explanation =
-        "Freight rates are expected to increase. Booking the vessel early can reduce future transportation cost.";
-
-    } else if (risk === "High") {
-
-      action = "Monitor Market & Delay Charter";
-
-      explanation =
-        "The current shipment has higher risk due to cargo volume. Monitor freight and vessel availability before chartering.";
-
-    } else {
-
-      action = "Proceed with Charter";
-
-      explanation =
-        "Current market conditions are relatively stable. Proceed with the recommended vessel and port.";
-
-    }
-
-    // Estimated Savings
-    const estimatedSavings =
-      Math.round((predictedRate - currentRate) * quantity * 80);
-
-    setResult({
-      action,
-      explanation,
-      currentRate,
-      predictedRate,
+    setRecommendation({
       vessel,
-      vesselCapacity,
-      utilization,
-      port: form.destination,
-      risk,
-      estimatedSavings
+      port,
+      freight,
+      saving,
+      confidence,
+      quantity: qty,
     });
   };
 
   return (
-    <div className="recommendation-page">
+    <div className="page-container">
 
-      {/* Header */}
-
+      {/* PAGE HEADER */}
       <div className="page-header">
 
+        <div className="page-header-icon">
+          <Brain size={25} />
+        </div>
+
         <div>
-          <h1>
-            <Brain size={30} />
-            AI Recommendation Center
-          </h1>
+          <h2>AI Recommendations</h2>
 
           <p>
-            Intelligent decision support for vessel chartering and cargo procurement
+            Intelligent recommendations for freight, vessel and
+            port optimization
           </p>
         </div>
 
       </div>
 
 
-      {/* AI Banner */}
+      {/* INPUT PANEL */}
+      <div className="panel">
 
-      <div className="ai-banner">
+        <div className="panel-header">
 
-        <div className="ai-banner-icon">
-          <Brain size={35} />
+          <div>
+            <h3>AI Decision Parameters</h3>
+
+            <p>
+              Enter shipment information to generate an optimized
+              logistics recommendation
+            </p>
+          </div>
+
+          <Brain size={21} />
+
         </div>
 
-        <div>
-          <h2>SmartFreight AI Engine</h2>
-
-          <p>
-            Analyze freight rates, cargo demand, vessel capacity,
-            port performance and operational risk.
-          </p>
-        </div>
-
-      </div>
-
-
-      {/* Input Section */}
-
-      <div className="recommendation-card">
-
-        <h2>Shipment Details</h2>
 
         <div className="form-grid">
 
+          {/* CARGO */}
           <div className="form-group">
 
             <label>Cargo Type</label>
 
             <select
-              name="cargo"
-              value={form.cargo}
-              onChange={handleChange}
+              value={cargo}
+              onChange={(e) => setCargo(e.target.value)}
             >
               <option>Coal</option>
               <option>Iron Ore</option>
-              <option>Cement</option>
-              <option>Steel</option>
+              <option>Fertilizer</option>
+              <option>Limestone</option>
               <option>Grain</option>
+              <option>Cement</option>
             </select>
 
           </div>
 
 
+          {/* QUANTITY */}
           <div className="form-group">
 
-            <label>Cargo Quantity (Tonnes)</label>
+            <label>Cargo Quantity (Metric Tons)</label>
 
             <input
               type="number"
-              name="quantity"
-              value={form.quantity}
-              onChange={handleChange}
+              placeholder="Example: 50000"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
             />
 
           </div>
 
 
+          {/* ORIGIN */}
           <div className="form-group">
 
             <label>Origin Country</label>
 
-            <select
-              name="origin"
-              value={form.origin}
-              onChange={handleChange}
-            >
-              <option>Australia</option>
-              <option>Indonesia</option>
-              <option>South Africa</option>
-              <option>Brazil</option>
-              <option>USA</option>
-            </select>
+            <input
+              type="text"
+              placeholder="Example: Indonesia"
+              value={origin}
+              onChange={(e) => setOrigin(e.target.value)}
+            />
 
           </div>
 
 
+          {/* DESTINATION */}
           <div className="form-group">
 
-            <label>Destination Port</label>
+            <label>Destination Region</label>
 
-            <select
-              name="destination"
-              value={form.destination}
-              onChange={handleChange}
-            >
-              <option>Krishnapatnam</option>
-              <option>Visakhapatnam</option>
-              <option>Paradip</option>
-              <option>Kamarajar Port</option>
+            <select>
+              <option>East Coast of India</option>
+              <option>South India</option>
+              <option>India</option>
             </select>
 
           </div>
@@ -228,195 +163,355 @@ function AIRecommendations() {
         </div>
 
 
-        <button
-          className="generate-btn"
-          onClick={generateRecommendation}
-        >
-          <Brain size={20} />
-          Generate AI Recommendation
-        </button>
+        <div style={{ padding: "0 24px 24px" }}>
+
+          <button
+            className="primary-btn"
+            onClick={generateRecommendation}
+          >
+            <Brain size={16} />
+            Generate AI Recommendation
+          </button>
+
+        </div>
 
       </div>
 
 
-      {/* Result */}
+      {/* AI RESULT */}
+      {recommendation && (
+        <>
 
-      {result && (
+          {/* AI STATUS */}
+          <div
+            className="panel"
+            style={{
+              marginTop: "20px",
+              padding: "20px",
+              background: "#f5faff",
+            }}
+          >
 
-        <div className="recommendation-results">
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
 
-          {/* Main Recommendation */}
+              <div
+                className="ai-icon"
+                style={{
+                  width: "45px",
+                  height: "45px",
+                }}
+              >
+                🤖
+              </div>
 
-          <div className="main-recommendation">
+              <div>
 
-            <div className="success-icon">
-              <CheckCircle size={35} />
-            </div>
+                <h3 style={{ fontSize: "15px" }}>
+                  AI Analysis Completed
+                </h3>
 
-            <div>
+                <p
+                  style={{
+                    marginTop: "4px",
+                    fontSize: "11px",
+                    color: "#7b8799",
+                  }}
+                >
+                  Recommendation generated using shipment,
+                  freight and logistics parameters.
+                </p>
 
-              <span>AI RECOMMENDED ACTION</span>
+              </div>
 
-              <h2>{result.action}</h2>
-
-              <p>{result.explanation}</p>
+              <div
+                style={{
+                  marginLeft: "auto",
+                  color: "#16894b",
+                  fontWeight: "700",
+                  fontSize: "12px",
+                }}
+              >
+                <CheckCircle size={16} />
+                {recommendation.confidence}
+              </div>
 
             </div>
 
           </div>
 
 
-          {/* Metrics */}
+          {/* RECOMMENDATION CARDS */}
+          <div className="result-grid">
 
-          <div className="recommendation-metrics">
+            {/* VESSEL */}
+            <div className="result-card">
 
-
-            {/* Freight */}
-
-            <div className="recommendation-metric">
-
-              <div className="metric-icon">
-                <TrendingUp size={24} />
-              </div>
-
-              <span>Predicted Freight</span>
-
-              <strong>
-                ${result.predictedRate}
-              </strong>
-
-              <small>
-                Current: ${result.currentRate}
-              </small>
-
-            </div>
-
-
-            {/* Vessel */}
-
-            <div className="recommendation-metric">
-
-              <div className="metric-icon">
-                <Ship size={24} />
+              <div className="result-icon blue">
+                <Ship size={19} />
               </div>
 
               <span>Recommended Vessel</span>
 
-              <strong>
-                {result.vessel}
-              </strong>
+              <h3>
+                {recommendation.vessel}
+              </h3>
 
               <small>
-                Utilization: {result.utilization}%
+                Based on cargo quantity
               </small>
 
             </div>
 
 
-            {/* Port */}
+            {/* PORT */}
+            <div className="result-card">
 
-            <div className="recommendation-metric">
-
-              <div className="metric-icon">
-                <Anchor size={24} />
+              <div className="result-icon green">
+                <Anchor size={19} />
               </div>
 
-              <span>Recommended Port</span>
+              <span>Preferred Port</span>
 
-              <strong>
-                {result.port}
-              </strong>
+              <h3>
+                {recommendation.port}
+              </h3>
 
               <small>
-                Optimized route
+                East Coast optimization
               </small>
 
             </div>
 
 
-            {/* Risk */}
+            {/* FREIGHT */}
+            <div className="result-card">
 
-            <div className="recommendation-metric">
-
-              <div className="metric-icon">
-                <AlertTriangle size={24} />
+              <div className="result-icon orange">
+                <TrendingUp size={19} />
               </div>
 
-              <span>Overall Risk</span>
+              <span>Expected Freight</span>
 
-              <strong>
-                {result.risk}
-              </strong>
+              <h3>
+                {recommendation.freight}
+              </h3>
 
               <small>
-                Operational assessment
+                Estimated rate per metric ton
               </small>
 
             </div>
 
+
+            {/* SAVING */}
+            <div className="result-card">
+
+              <div className="result-icon green">
+                <DollarSign size={19} />
+              </div>
+
+              <span>Potential Saving</span>
+
+              <h3 className="positive">
+                {recommendation.saving}
+              </h3>
+
+              <small>
+                Estimated logistics optimization
+              </small>
+
+            </div>
 
           </div>
 
 
-          {/* Savings */}
+          {/* MAIN RECOMMENDATION */}
+          <div
+            className="panel"
+            style={{ marginTop: "20px" }}
+          >
 
-          <div className="savings-card">
+            <div className="panel-header">
 
-            <div className="savings-icon">
-              <IndianRupee size={28} />
+              <div>
+                <h3>Recommended Logistics Strategy</h3>
+
+                <p>
+                  AI-generated decision summary
+                </p>
+              </div>
+
+              <ShieldCheck size={20} />
+
+            </div>
+
+
+            <div
+              style={{
+                padding: "22px",
+              }}
+            >
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(3, 1fr)",
+                  gap: "15px",
+                }}
+              >
+
+                <div
+                  style={{
+                    padding: "16px",
+                    background: "#f8fafc",
+                    borderRadius: "8px",
+                  }}
+                >
+
+                  <Ship size={20} />
+
+                  <h4
+                    style={{
+                      marginTop: "10px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    Charter Strategy
+                  </h4>
+
+                  <p
+                    style={{
+                      marginTop: "5px",
+                      fontSize: "10px",
+                      color: "#7c8799",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    Secure the recommended vessel early
+                    to reduce exposure to freight-rate
+                    increases.
+                  </p>
+
+                </div>
+
+
+                <div
+                  style={{
+                    padding: "16px",
+                    background: "#f8fafc",
+                    borderRadius: "8px",
+                  }}
+                >
+
+                  <Anchor size={20} />
+
+                  <h4
+                    style={{
+                      marginTop: "10px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    Port Strategy
+                  </h4>
+
+                  <p
+                    style={{
+                      marginTop: "5px",
+                      fontSize: "10px",
+                      color: "#7c8799",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    Prioritize {recommendation.port}
+                    for better operational efficiency
+                    and estimated cost savings.
+                  </p>
+
+                </div>
+
+
+                <div
+                  style={{
+                    padding: "16px",
+                    background: "#f8fafc",
+                    borderRadius: "8px",
+                  }}
+                >
+
+                  <Package size={20} />
+
+                  <h4
+                    style={{
+                      marginTop: "10px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    Cargo Strategy
+                  </h4>
+
+                  <p
+                    style={{
+                      marginTop: "5px",
+                      fontSize: "10px",
+                      color: "#7c8799",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    Plan procurement according to the
+                    forecasted cargo demand.
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          {/* FINAL AI RECOMMENDATION */}
+          <div
+            className="forecast-recommendation"
+            style={{ marginTop: "20px" }}
+          >
+
+            <div className="recommendation-icon">
+              🤖
             </div>
 
             <div>
 
-              <span>ESTIMATED COST SAVING</span>
-
-              <h2>
-                ₹{result.estimatedSavings.toLocaleString("en-IN")}
-              </h2>
+              <h4>
+                Final AI Recommendation
+              </h4>
 
               <p>
-                Potential saving from optimized charter timing
+
+                For <strong>{recommendation.quantity.toLocaleString()}
+                metric tons</strong> of{" "}
+                <strong>{cargo}</strong> imported from{" "}
+                <strong>{origin}</strong>, AI recommends a{" "}
+                <strong>{recommendation.vessel}</strong> vessel
+                with <strong>{recommendation.port}</strong> as the
+                preferred port. Early chartering can help reduce
+                freight-rate exposure and achieve an estimated
+                saving of <strong>{recommendation.saving}</strong>.
+
               </p>
 
             </div>
 
           </div>
 
-
-          {/* AI Explanation */}
-
-          <div className="decision-card">
-
-            <h2>Why AI Recommended This?</h2>
-
-            <div className="decision-list">
-
-              <div>
-                <CheckCircle size={18} />
-                Freight trend analyzed
-              </div>
-
-              <div>
-                <CheckCircle size={18} />
-                Vessel capacity optimized
-              </div>
-
-              <div>
-                <CheckCircle size={18} />
-                Port selection evaluated
-              </div>
-
-              <div>
-                <CheckCircle size={18} />
-                Operational risk assessed
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
+        </>
       )}
 
     </div>

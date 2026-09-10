@@ -1,218 +1,248 @@
 import { useState } from "react";
-import { TrendingUp, Ship, AlertTriangle } from "lucide-react";
+import {
+  TrendingUp,
+  Ship,
+  AlertTriangle,
+  Brain
+} from "lucide-react";
 
 function FreightForecast() {
 
-  const [formData, setFormData] = useState({
-    origin: "",
-    destination: "",
-    cargo: "",
-    quantity: "",
-    period: "30"
+  const [form, setForm] = useState({
+    origin: "Australia",
+    port: "Krishnapatnam",
+    cargo: "Coal",
+    quantity: "50000",
+    period: "30 Days"
   });
 
-  const [forecast, setForecast] = useState(null);
+  const [result, setResult] = useState(null);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setForm({
+      ...form,
       [e.target.name]: e.target.value
     });
   };
 
-  const generateForecast = (e) => {
-    e.preventDefault();
+  const generateForecast = () => {
 
-    if (
-      !formData.origin ||
-      !formData.destination ||
-      !formData.cargo ||
-      !formData.quantity
-    ) {
-      alert("Please fill all the fields");
-      return;
-    }
+    const quantity = Number(form.quantity);
 
     const currentRate = 25.40;
-    const predictedRate = 28.70;
-    const increase = 13;
 
-    setForecast({
+    const predictedRate =
+      quantity > 70000 ? 30.20 :
+      quantity > 50000 ? 29.40 :
+      28.70;
+
+    const increase =
+      ((predictedRate - currentRate) / currentRate * 100).toFixed(1);
+
+    const risk =
+      quantity > 70000 ? "High" :
+      quantity < 30000 ? "Low" :
+      "Medium";
+
+    setResult({
       currentRate,
       predictedRate,
       increase,
-      risk: "Medium"
+      risk
     });
   };
 
   return (
-    <div className="forecast-page">
+    <div className="page-container">
 
-      {/* Page Header */}
+      {/* PAGE HEADER */}
 
-      <div className="page-title">
+      <div className="page-header">
+
         <div>
           <h2>Freight Rate Forecast</h2>
 
           <p>
-            Predict future freight rates using intelligent
-            market analysis.
+            Predict future freight rates using historical
+            market and shipping data.
           </p>
         </div>
 
-        <div className="forecast-status">
-          <span></span>
-          AI Forecast Engine Active
+        <div className="page-header-icon">
+          <TrendingUp size={28} />
         </div>
+
       </div>
 
 
-      {/* Input Form */}
+      {/* FORECAST FORM */}
 
-      <div className="forecast-card">
+      <div className="panel">
 
-        <h3>Shipment Details</h3>
+        <div className="panel-header">
 
-        <p className="card-description">
-          Enter your shipment information to generate a
-          freight forecast.
-        </p>
+          <div>
+            <h3>Forecast Parameters</h3>
 
-        <form onSubmit={generateForecast}>
+            <p>
+              Enter shipment details to generate a freight forecast.
+            </p>
+          </div>
 
-          <div className="form-grid">
-
-            <div className="form-group">
-              <label>Origin Country</label>
-
-              <select
-                name="origin"
-                value={formData.origin}
-                onChange={handleChange}
-              >
-                <option value="">Select origin</option>
-                <option value="Australia">Australia</option>
-                <option value="Indonesia">Indonesia</option>
-                <option value="South Africa">South Africa</option>
-                <option value="Brazil">Brazil</option>
-              </select>
-            </div>
+        </div>
 
 
-            <div className="form-group">
-              <label>Destination Port</label>
+        <div className="form-grid">
 
-              <select
-                name="destination"
-                value={formData.destination}
-                onChange={handleChange}
-              >
-                <option value="">Select port</option>
-                <option value="Ennore">Ennore</option>
-                <option value="Krishnapatnam">
-                  Krishnapatnam
-                </option>
-                <option value="Visakhapatnam">
-                  Visakhapatnam
-                </option>
-                <option value="Paradip">Paradip</option>
-              </select>
-            </div>
+          {/* Origin */}
 
+          <div className="form-group">
 
-            <div className="form-group">
-              <label>Cargo Type</label>
+            <label>Origin Country</label>
 
-              <select
-                name="cargo"
-                value={formData.cargo}
-                onChange={handleChange}
-              >
-                <option value="">Select cargo</option>
-                <option value="Coal">Coal</option>
-                <option value="Iron Ore">Iron Ore</option>
-                <option value="Fertilizer">Fertilizer</option>
-                <option value="Grain">Grain</option>
-              </select>
-            </div>
-
-
-            <div className="form-group">
-              <label>Cargo Quantity (Tons)</label>
-
-              <input
-                type="number"
-                name="quantity"
-                placeholder="Example: 50000"
-                value={formData.quantity}
-                onChange={handleChange}
-              />
-            </div>
-
-
-            <div className="form-group">
-              <label>Forecast Period</label>
-
-              <select
-                name="period"
-                value={formData.period}
-                onChange={handleChange}
-              >
-                <option value="30">Next 30 Days</option>
-                <option value="60">Next 60 Days</option>
-                <option value="90">Next 90 Days</option>
-              </select>
-            </div>
+            <select
+              name="origin"
+              value={form.origin}
+              onChange={handleChange}
+            >
+              <option>Australia</option>
+              <option>Indonesia</option>
+              <option>South Africa</option>
+              <option>Brazil</option>
+              <option>USA</option>
+            </select>
 
           </div>
 
 
-          <button
-            type="submit"
-            className="generate-btn"
-          >
-            <TrendingUp size={18} />
-            Generate Forecast
-          </button>
+          {/* Destination */}
 
-        </form>
+          <div className="form-group">
+
+            <label>Destination Port</label>
+
+            <select
+              name="port"
+              value={form.port}
+              onChange={handleChange}
+            >
+              <option>Krishnapatnam</option>
+              <option>Ennore</option>
+              <option>Visakhapatnam</option>
+              <option>Paradip</option>
+            </select>
+
+          </div>
+
+
+          {/* Cargo */}
+
+          <div className="form-group">
+
+            <label>Cargo Type</label>
+
+            <select
+              name="cargo"
+              value={form.cargo}
+              onChange={handleChange}
+            >
+              <option>Coal</option>
+              <option>Iron Ore</option>
+              <option>Limestone</option>
+              <option>Grain</option>
+              <option>Fertilizer</option>
+            </select>
+
+          </div>
+
+
+          {/* Quantity */}
+
+          <div className="form-group">
+
+            <label>Cargo Quantity (Tons)</label>
+
+            <input
+              type="number"
+              name="quantity"
+              value={form.quantity}
+              onChange={handleChange}
+              placeholder="Enter quantity"
+            />
+
+          </div>
+
+
+          {/* Forecast Period */}
+
+          <div className="form-group">
+
+            <label>Forecast Period</label>
+
+            <select
+              name="period"
+              value={form.period}
+              onChange={handleChange}
+            >
+              <option>30 Days</option>
+              <option>60 Days</option>
+              <option>90 Days</option>
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <button
+          className="primary-btn"
+          onClick={generateForecast}
+        >
+          <TrendingUp size={18} />
+          Generate Forecast
+        </button>
 
       </div>
 
 
-      {/* Forecast Result */}
+      {/* RESULT */}
 
-      {forecast && (
+      {result && (
 
         <div className="forecast-results">
 
           <div className="result-header">
+
             <div>
-              <h3>Forecast Results</h3>
+              <h3>Forecast Result</h3>
 
               <p>
-                {formData.origin} → {formData.destination}
+                AI-generated freight rate prediction
               </p>
             </div>
 
-            <span className="prediction-badge">
-              AI Prediction
-            </span>
+            <div className="ai-status">
+              <Brain size={18} />
+              AI Analysis Complete
+            </div>
+
           </div>
 
 
-          <div className="result-cards">
+          <div className="result-grid">
+
+            {/* Current Rate */}
 
             <div className="result-card">
 
-              <div className="result-icon">
-                <TrendingUp size={21} />
+              <div className="result-icon blue">
+                <TrendingUp size={22} />
               </div>
 
               <span>Current Freight Rate</span>
 
               <h2>
-                ${forecast.currentRate}
+                ${result.currentRate.toFixed(2)}
               </h2>
 
               <small>per metric ton</small>
@@ -220,67 +250,77 @@ function FreightForecast() {
             </div>
 
 
-            <div className="result-card highlight">
+            {/* Predicted Rate */}
 
-              <div className="result-icon">
-                <TrendingUp size={21} />
+            <div className="result-card">
+
+              <div className="result-icon green">
+                <TrendingUp size={22} />
               </div>
 
               <span>Predicted Freight Rate</span>
 
               <h2>
-                ${forecast.predictedRate}
+                ${result.predictedRate.toFixed(2)}
               </h2>
 
               <small>
-                Next {formData.period} days
+                Next {form.period}
               </small>
 
             </div>
 
 
+            {/* Increase */}
+
             <div className="result-card">
 
-              <div className="result-icon">
-                <Ship size={21} />
+              <div className="result-icon orange">
+                <TrendingUp size={22} />
               </div>
 
               <span>Expected Change</span>
 
-              <h2>
-                +{forecast.increase}%
+              <h2 className="positive">
+                +{result.increase}%
               </h2>
 
-              <small>Rate increase expected</small>
+              <small>
+                Freight rate movement
+              </small>
 
             </div>
 
 
+            {/* Risk */}
+
             <div className="result-card">
 
-              <div className="result-icon warning">
-                <AlertTriangle size={21} />
+              <div className="result-icon red">
+                <AlertTriangle size={22} />
               </div>
 
-              <span>Risk Level</span>
+              <span>Forecast Risk</span>
 
               <h2>
-                {forecast.risk}
+                {result.risk}
               </h2>
 
-              <small>Market volatility</small>
+              <small>
+                Market volatility
+              </small>
 
             </div>
 
           </div>
 
 
-          {/* Recommendation */}
+          {/* AI RECOMMENDATION */}
 
           <div className="forecast-recommendation">
 
             <div className="recommendation-icon">
-              🤖
+              <Brain size={24} />
             </div>
 
             <div>
@@ -288,14 +328,15 @@ function FreightForecast() {
               <span>AI RECOMMENDATION</span>
 
               <h3>
-                Consider chartering your vessel early
+                Charter Vessel Early
               </h3>
 
               <p>
-                Our model predicts a {forecast.increase}%
-                increase in freight rates over the selected
-                forecast period. Early chartering may help
-                reduce transportation costs.
+                Freight rates are expected to increase by
+                approximately {result.increase}% during the
+                selected forecast period. Early vessel
+                chartering can help reduce potential
+                transportation costs.
               </p>
 
             </div>

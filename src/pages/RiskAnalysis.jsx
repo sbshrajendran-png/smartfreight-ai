@@ -1,328 +1,216 @@
 import { useState } from "react";
 import {
   AlertTriangle,
+  ShieldCheck,
   TrendingUp,
   Ship,
   Anchor,
-  Package,
-  ShieldCheck
+  CloudRain,
+  DollarSign,
+  Activity,
+  CheckCircle,
 } from "lucide-react";
 
 function RiskAnalysis() {
+  const [cargo, setCargo] = useState("Coal");
+  const [quantity, setQuantity] = useState("");
+  const [origin, setOrigin] = useState("");
+  const [analyzed, setAnalyzed] = useState(false);
 
-  const [formData, setFormData] = useState({
-    cargo: "",
-    quantity: "",
-    port: ""
-  });
-
-  const [result, setResult] = useState(null);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const analyzeRisk = (e) => {
-    e.preventDefault();
-
-    if (!formData.cargo || !formData.quantity || !formData.port) {
-      alert("Please fill all the fields");
+  const analyzeRisk = () => {
+    if (!quantity || !origin) {
+      alert("Please enter cargo quantity and origin.");
       return;
     }
 
-    const quantity = Number(formData.quantity);
-
-    let overallRisk = "Medium";
-    let freightRisk = "Medium";
-    let congestion = "Low";
-    let vesselRisk = "Low";
-    let demandRisk = "Medium";
-
-    if (quantity > 70000) {
-      overallRisk = "High";
-      freightRisk = "High";
-      demandRisk = "High";
-      vesselRisk = "Medium";
-    } else if (quantity < 30000) {
-      overallRisk = "Low";
-      freightRisk = "Low";
-      demandRisk = "Low";
-    }
-
-    setResult({
-      overallRisk,
-      freightRisk,
-      congestion,
-      vesselRisk,
-      demandRisk
-    });
+    setAnalyzed(true);
   };
 
   return (
-    <div className="forecast-page">
+    <div className="page-container">
 
-      {/* Header */}
-
-      <div className="page-title">
+      {/* PAGE HEADER */}
+      <div className="page-header">
+        <div className="page-header-icon">
+          <AlertTriangle size={25} />
+        </div>
 
         <div>
           <h2>Risk Analysis</h2>
-
           <p>
-            Analyze logistics risks before making
-            chartering and cargo procurement decisions.
+            Analyze maritime logistics risks before making chartering
+            decisions
           </p>
         </div>
+      </div>
 
-        <div className="forecast-status">
-          <span></span>
-          AI Risk Engine Active
+
+      {/* INPUT PANEL */}
+      <div className="panel">
+
+        <div className="panel-header">
+          <div>
+            <h3>Risk Assessment Parameters</h3>
+            <p>
+              Enter shipment details to evaluate logistics risks
+            </p>
+          </div>
+        </div>
+
+
+        <div className="form-grid">
+
+          {/* CARGO */}
+          <div className="form-group">
+            <label>Cargo Type</label>
+
+            <select
+              value={cargo}
+              onChange={(e) => setCargo(e.target.value)}
+            >
+              <option>Coal</option>
+              <option>Iron Ore</option>
+              <option>Fertilizer</option>
+              <option>Limestone</option>
+              <option>Grain</option>
+              <option>Cement</option>
+            </select>
+          </div>
+
+
+          {/* QUANTITY */}
+          <div className="form-group">
+            <label>Cargo Quantity (Metric Tons)</label>
+
+            <input
+              type="number"
+              placeholder="Example: 50000"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+            />
+          </div>
+
+
+          {/* ORIGIN */}
+          <div className="form-group">
+            <label>Origin Country</label>
+
+            <input
+              type="text"
+              placeholder="Example: Indonesia"
+              value={origin}
+              onChange={(e) => setOrigin(e.target.value)}
+            />
+          </div>
+
+
+          {/* ROUTE */}
+          <div className="form-group">
+            <label>Destination</label>
+
+            <select>
+              <option>East Coast of India</option>
+              <option>Krishnapatnam</option>
+              <option>Ennore</option>
+              <option>Visakhapatnam</option>
+              <option>Paradip</option>
+            </select>
+          </div>
+
+        </div>
+
+
+        <div style={{ padding: "0 24px 24px" }}>
+          <button
+            className="primary-btn"
+            onClick={analyzeRisk}
+          >
+            <ShieldCheck size={16} />
+            Analyze Risk
+          </button>
         </div>
 
       </div>
 
 
-      {/* Input */}
+      {/* RISK RESULTS */}
+      {analyzed && (
+        <>
 
-      <div className="forecast-card">
+          {/* RISK OVERVIEW */}
+          <div className="result-grid">
 
-        <h3>Shipment Risk Assessment</h3>
+            {/* OVERALL RISK */}
+            <div className="result-card">
 
-        <p className="card-description">
-          Enter shipment details to evaluate potential
-          logistics risks.
-        </p>
-
-        <form onSubmit={analyzeRisk}>
-
-          <div className="form-grid">
-
-            {/* Cargo */}
-
-            <div className="form-group">
-
-              <label>Cargo Type</label>
-
-              <select
-                name="cargo"
-                value={formData.cargo}
-                onChange={handleChange}
-              >
-
-                <option value="">
-                  Select cargo
-                </option>
-
-                <option value="Coal">
-                  Coal
-                </option>
-
-                <option value="Iron Ore">
-                  Iron Ore
-                </option>
-
-                <option value="Fertilizer">
-                  Fertilizer
-                </option>
-
-                <option value="Grain">
-                  Grain
-                </option>
-
-              </select>
-
-            </div>
-
-
-            {/* Quantity */}
-
-            <div className="form-group">
-
-              <label>Cargo Quantity (Tons)</label>
-
-              <input
-                type="number"
-                name="quantity"
-                placeholder="Example: 50000"
-                value={formData.quantity}
-                onChange={handleChange}
-              />
-
-            </div>
-
-
-            {/* Port */}
-
-            <div className="form-group">
-
-              <label>Destination Port</label>
-
-              <select
-                name="port"
-                value={formData.port}
-                onChange={handleChange}
-              >
-
-                <option value="">
-                  Select port
-                </option>
-
-                <option value="Ennore">
-                  Ennore
-                </option>
-
-                <option value="Krishnapatnam">
-                  Krishnapatnam
-                </option>
-
-                <option value="Visakhapatnam">
-                  Visakhapatnam
-                </option>
-
-                <option value="Paradip">
-                  Paradip
-                </option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-
-          <button
-            type="submit"
-            className="generate-btn"
-          >
-
-            <ShieldCheck size={18} />
-
-            Analyze Risk
-
-          </button>
-
-        </form>
-
-      </div>
-
-
-      {/* Results */}
-
-      {result && (
-
-        <div className="forecast-results">
-
-          <div className="result-header">
-
-            <div>
-
-              <h3>Risk Assessment Result</h3>
-
-              <p>
-                {formData.cargo} → {formData.port}
-              </p>
-
-            </div>
-
-            <span className="prediction-badge">
-              AI Risk Assessment
-            </span>
-
-          </div>
-
-
-          {/* Risk Cards */}
-
-          <div className="result-cards">
-
-            {/* Overall */}
-
-            <div className="result-card highlight">
-
-              <div className="result-icon warning">
-                <AlertTriangle size={21} />
+              <div className="result-icon orange">
+                <AlertTriangle size={19} />
               </div>
 
               <span>Overall Risk</span>
 
-              <h2>
-                {result.overallRisk}
-              </h2>
+              <h3>Medium</h3>
 
               <small>
-                Shipment risk level
+                Moderate logistics exposure
               </small>
 
             </div>
 
 
-            {/* Freight */}
-
+            {/* FREIGHT RISK */}
             <div className="result-card">
 
-              <div className="result-icon">
-
-                <TrendingUp size={21} />
-
+              <div className="result-icon red">
+                <TrendingUp size={19} />
               </div>
 
-              <span>Freight Volatility</span>
+              <span>Freight Rate Risk</span>
 
-              <h2>
-                {result.freightRisk}
-              </h2>
+              <h3>Medium</h3>
 
               <small>
-                Freight rate risk
+                Rate volatility detected
               </small>
 
             </div>
 
 
-            {/* Port */}
-
+            {/* VESSEL RISK */}
             <div className="result-card">
 
-              <div className="result-icon">
-
-                <Anchor size={21} />
-
-              </div>
-
-              <span>Port Congestion</span>
-
-              <h2>
-                {result.congestion}
-              </h2>
-
-              <small>
-                Port operational risk
-              </small>
-
-            </div>
-
-
-            {/* Vessel */}
-
-            <div className="result-card">
-
-              <div className="result-icon">
-
-                <Ship size={21} />
-
+              <div className="result-icon blue">
+                <Ship size={19} />
               </div>
 
               <span>Vessel Availability</span>
 
-              <h2>
-                {result.vesselRisk}
-              </h2>
+              <h3 className="positive">
+                Low Risk
+              </h3>
 
               <small>
-                Vessel availability risk
+                Suitable vessels available
+              </small>
+
+            </div>
+
+
+            {/* PORT RISK */}
+            <div className="result-card">
+
+              <div className="result-icon green">
+                <Anchor size={19} />
+              </div>
+
+              <span>Port Risk</span>
+
+              <h3 className="positive">
+                Low
+              </h3>
+
+              <small>
+                Congestion currently manageable
               </small>
 
             </div>
@@ -330,20 +218,227 @@ function RiskAnalysis() {
           </div>
 
 
-          {/* Additional Risk */}
-
-          <div className="panel" style={{ marginTop: "20px" }}>
+          {/* RISK FACTORS */}
+          <div
+            className="panel"
+            style={{ marginTop: "20px" }}
+          >
 
             <div className="panel-header">
 
               <div>
-
-                <h3>Risk Indicators</h3>
+                <h3>Risk Factors</h3>
 
                 <p>
-                  Current shipment risk factors
+                  Key factors affecting the shipment
                 </p>
+              </div>
 
+              <Activity size={20} />
+
+            </div>
+
+
+            <div className="status-list">
+
+              {/* FREIGHT */}
+              <div>
+
+                <TrendingUp size={16} />
+
+                <span>
+                  Freight Rate Volatility
+                </span>
+
+                <strong style={{ color: "#d88a08" }}>
+                  Medium
+                </strong>
+
+              </div>
+
+
+              {/* WEATHER */}
+              <div>
+
+                <CloudRain size={16} />
+
+                <span>
+                  Weather / Seasonal Risk
+                </span>
+
+                <strong style={{ color: "#d88a08" }}>
+                  Medium
+                </strong>
+
+              </div>
+
+
+              {/* VESSEL */}
+              <div>
+
+                <Ship size={16} />
+
+                <span>
+                  Vessel Availability
+                </span>
+
+                <strong style={{ color: "#16894b" }}>
+                  Low
+                </strong>
+
+              </div>
+
+
+              {/* PORT */}
+              <div>
+
+                <Anchor size={16} />
+
+                <span>
+                  Port Congestion
+                </span>
+
+                <strong style={{ color: "#16894b" }}>
+                  Low
+                </strong>
+
+              </div>
+
+
+              {/* CURRENCY */}
+              <div>
+
+                <DollarSign size={16} />
+
+                <span>
+                  Currency Exposure
+                </span>
+
+                <strong style={{ color: "#d88a08" }}>
+                  Medium
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          {/* RISK SCORE */}
+          <div
+            className="panel"
+            style={{ marginTop: "20px" }}
+          >
+
+            <div className="panel-header">
+
+              <div>
+                <h3>Risk Score</h3>
+
+                <p>
+                  AI-generated shipment risk assessment
+                </p>
+              </div>
+
+              <strong
+                style={{
+                  fontSize: "22px",
+                  color: "#d88a08",
+                }}
+              >
+                58 / 100
+              </strong>
+
+            </div>
+
+
+            <div style={{ padding: "20px" }}>
+
+              <div
+                style={{
+                  height: "10px",
+                  background: "#edf0f5",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                }}
+              >
+
+                <div
+                  style={{
+                    width: "58%",
+                    height: "100%",
+                    background: "#f59e0b",
+                    borderRadius: "10px",
+                  }}
+                ></div>
+
+              </div>
+
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "8px",
+                  fontSize: "10px",
+                  color: "#8993a5",
+                }}
+              >
+                <span>Low Risk</span>
+                <span>Medium Risk</span>
+                <span>High Risk</span>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          {/* AI RECOMMENDATION */}
+          <div
+            className="forecast-recommendation"
+            style={{ marginTop: "20px" }}
+          >
+
+            <div className="recommendation-icon">
+              🤖
+            </div>
+
+            <div>
+
+              <h4>
+                AI Risk Mitigation Recommendation
+              </h4>
+
+              <p>
+                For <strong>{quantity} metric tons</strong> of{" "}
+                <strong>{cargo}</strong> imported from{" "}
+                <strong>{origin}</strong>, consider early vessel
+                chartering to reduce freight-rate exposure. Monitor
+                port congestion and seasonal weather conditions
+                before finalizing the shipment.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          {/* ACTION PLAN */}
+          <div
+            className="panel"
+            style={{ marginTop: "20px" }}
+          >
+
+            <div className="panel-header">
+
+              <div>
+                <h3>Risk Mitigation Action Plan</h3>
+
+                <p>
+                  Recommended actions for logistics planning
+                </p>
               </div>
 
             </div>
@@ -352,97 +447,34 @@ function RiskAnalysis() {
             <div className="status-list">
 
               <div>
-
-                <span className="yellow"></span>
-
-                Freight Rate Risk
-
-                <strong>
-                  {result.freightRisk}
-                </strong>
-
+                <CheckCircle size={16} />
+                Monitor Freight Rates
+                <strong>Recommended</strong>
               </div>
 
-
               <div>
-
-                <span className="green"></span>
-
-                Port Congestion
-
-                <strong>
-                  {result.congestion}
-                </strong>
-
+                <CheckCircle size={16} />
+                Reserve Vessel Capacity
+                <strong>Recommended</strong>
               </div>
 
-
               <div>
-
-                <span className="green"></span>
-
-                Vessel Availability
-
-                <strong>
-                  {result.vesselRisk}
-                </strong>
-
+                <CheckCircle size={16} />
+                Monitor Port Congestion
+                <strong>Required</strong>
               </div>
 
-
               <div>
-
-                <span className="yellow"></span>
-
-                Cargo Demand Risk
-
-                <strong>
-                  {result.demandRisk}
-                </strong>
-
+                <CheckCircle size={16} />
+                Review Weather Conditions
+                <strong>Required</strong>
               </div>
 
             </div>
 
           </div>
 
-
-          {/* AI Recommendation */}
-
-          <div className="forecast-recommendation">
-
-            <div className="recommendation-icon">
-              🤖
-            </div>
-
-            <div>
-
-              <span>
-                AI RISK RECOMMENDATION
-              </span>
-
-              <h3>
-                {result.overallRisk === "High"
-                  ? "Take additional risk precautions"
-                  : result.overallRisk === "Medium"
-                  ? "Monitor market conditions"
-                  : "Shipment risk is currently manageable"}
-              </h3>
-
-              <p>
-
-                The system has evaluated freight volatility,
-                port congestion, vessel availability and cargo
-                demand to estimate the overall shipment risk.
-
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
-
+        </>
       )}
 
     </div>

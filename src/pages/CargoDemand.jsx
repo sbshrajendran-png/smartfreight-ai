@@ -1,260 +1,320 @@
 import { useState } from "react";
-import { Package, TrendingUp, AlertTriangle } from "lucide-react";
+import {
+  Package,
+  TrendingUp,
+  BarChart3,
+  Calendar,
+  Ship,
+  CheckCircle,
+} from "lucide-react";
 
 function CargoDemand() {
+  const [cargo, setCargo] = useState("Coal");
+  const [quantity, setQuantity] = useState("");
+  const [forecast, setForecast] = useState(null);
 
-  const [formData, setFormData] = useState({
-    cargo: "",
-    quantity: "",
-    period: "30"
-  });
-
-  const [result, setResult] = useState(null);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const analyzeDemand = (e) => {
-    e.preventDefault();
-
-    if (!formData.cargo || !formData.quantity) {
-      alert("Please fill all the fields");
+  const calculateDemand = () => {
+    if (!quantity) {
+      alert("Please enter current cargo quantity.");
       return;
     }
 
-    const quantity = Number(formData.quantity);
+    const current = Number(quantity);
 
-    let demand = "High";
-    let expected = quantity * 1.12;
-    let growth = 12;
-    let risk = "Medium";
+    const forecastData = [
+      Math.round(current * 1.08),
+      Math.round(current * 1.12),
+      Math.round(current * 1.15),
+      Math.round(current * 1.19),
+      Math.round(current * 1.23),
+      Math.round(current * 1.27),
+    ];
 
-    if (quantity < 30000) {
-      demand = "Medium";
-      expected = quantity * 1.08;
-      growth = 8;
-      risk = "Low";
-    }
-
-    if (quantity > 70000) {
-      demand = "Very High";
-      expected = quantity * 1.18;
-      growth = 18;
-      risk = "High";
-    }
-
-    setResult({
-      demand,
-      expected: Math.round(expected),
-      growth,
-      risk
-    });
+    setForecast(forecastData);
   };
 
+  const months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
+
+  const maxValue = forecast
+    ? Math.max(...forecast)
+    : 100;
+
   return (
-    <div className="forecast-page">
+    <div className="page-container">
 
-      {/* Header */}
-
-      <div className="page-title">
+      {/* PAGE HEADER */}
+      <div className="page-header">
+        <div className="page-header-icon">
+          <Package size={25} />
+        </div>
 
         <div>
-          <h2>Cargo Demand Analysis</h2>
-
+          <h2>Cargo Demand Forecast</h2>
           <p>
-            Analyze future bulk cargo demand and
-            identify demand trends.
+            Predict future bulk cargo requirements using AI analytics
           </p>
         </div>
+      </div>
 
-        <div className="forecast-status">
-          <span></span>
-          AI Demand Engine Active
+
+      {/* INPUT PANEL */}
+      <div className="panel">
+
+        <div className="panel-header">
+          <div>
+            <h3>Demand Forecast Parameters</h3>
+            <p>
+              Enter current cargo demand to generate a forecast
+            </p>
+          </div>
+        </div>
+
+
+        <div className="form-grid">
+
+          {/* CARGO TYPE */}
+          <div className="form-group">
+            <label>Cargo Type</label>
+
+            <select
+              value={cargo}
+              onChange={(e) => setCargo(e.target.value)}
+            >
+              <option>Coal</option>
+              <option>Iron Ore</option>
+              <option>Fertilizer</option>
+              <option>Limestone</option>
+              <option>Grain</option>
+              <option>Cement</option>
+            </select>
+          </div>
+
+
+          {/* CURRENT DEMAND */}
+          <div className="form-group">
+            <label>Current Demand (Metric Tons)</label>
+
+            <input
+              type="number"
+              placeholder="Example: 50000"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+            />
+          </div>
+
+
+          {/* FORECAST PERIOD */}
+          <div className="form-group">
+            <label>Forecast Period</label>
+
+            <select>
+              <option>Next 6 Months</option>
+              <option>Next 12 Months</option>
+            </select>
+          </div>
+
+
+          {/* MARKET */}
+          <div className="form-group">
+            <label>Market Region</label>
+
+            <select>
+              <option>East Coast of India</option>
+              <option>South India</option>
+              <option>India</option>
+            </select>
+          </div>
+
+        </div>
+
+
+        <div style={{ padding: "0 24px 24px" }}>
+          <button
+            className="primary-btn"
+            onClick={calculateDemand}
+          >
+            <TrendingUp size={16} />
+            Generate Demand Forecast
+          </button>
         </div>
 
       </div>
 
 
-      {/* Input Card */}
+      {/* FORECAST RESULT */}
+      {forecast && (
+        <>
+          <div className="result-grid">
 
-      <div className="forecast-card">
+            {/* CURRENT DEMAND */}
+            <div className="result-card">
 
-        <h3>Cargo Information</h3>
+              <div className="result-icon blue">
+                <Package size={19} />
+              </div>
 
-        <p className="card-description">
-          Enter cargo details to analyze future demand.
-        </p>
+              <span>Current Demand</span>
 
-        <form onSubmit={analyzeDemand}>
+              <h3>
+                {Number(quantity).toLocaleString()} T
+              </h3>
 
-          <div className="form-grid">
-
-            <div className="form-group">
-
-              <label>Cargo Type</label>
-
-              <select
-                name="cargo"
-                value={formData.cargo}
-                onChange={handleChange}
-              >
-
-                <option value="">Select cargo</option>
-                <option value="Coal">Coal</option>
-                <option value="Iron Ore">Iron Ore</option>
-                <option value="Fertilizer">Fertilizer</option>
-                <option value="Grain">Grain</option>
-
-              </select>
+              <small>
+                Current {cargo} requirement
+              </small>
 
             </div>
 
 
-            <div className="form-group">
+            {/* 6 MONTH DEMAND */}
+            <div className="result-card">
 
-              <label>Current Cargo Quantity (Tons)</label>
+              <div className="result-icon green">
+                <TrendingUp size={19} />
+              </div>
 
-              <input
-                type="number"
-                name="quantity"
-                placeholder="Example: 50000"
-                value={formData.quantity}
-                onChange={handleChange}
-              />
+              <span>6 Month Demand</span>
+
+              <h3>
+                {forecast[5].toLocaleString()} T
+              </h3>
+
+              <small className="positive">
+                +27% expected growth
+              </small>
 
             </div>
 
 
-            <div className="form-group">
+            {/* PEAK DEMAND */}
+            <div className="result-card">
 
-              <label>Forecast Period</label>
+              <div className="result-icon orange">
+                <BarChart3 size={19} />
+              </div>
 
-              <select
-                name="period"
-                value={formData.period}
-                onChange={handleChange}
-              >
+              <span>Peak Demand</span>
 
-                <option value="30">Next 30 Days</option>
-                <option value="60">Next 60 Days</option>
-                <option value="90">Next 90 Days</option>
+              <h3>
+                {Math.max(...forecast).toLocaleString()} T
+              </h3>
 
-              </select>
+              <small>
+                Expected maximum requirement
+              </small>
+
+            </div>
+
+
+            {/* CONFIDENCE */}
+            <div className="result-card">
+
+              <div className="result-icon green">
+                <CheckCircle size={19} />
+              </div>
+
+              <span>Forecast Confidence</span>
+
+              <h3>91%</h3>
+
+              <small>
+                AI model confidence score
+              </small>
 
             </div>
 
           </div>
 
 
-          <button
-            type="submit"
-            className="generate-btn"
+          {/* CHART */}
+          <div className="panel" style={{ marginTop: "20px" }}>
+
+            <div className="panel-header">
+
+              <div>
+                <h3>Projected Cargo Demand</h3>
+
+                <p>
+                  {cargo} demand forecast for the next 6 months
+                </p>
+              </div>
+
+              <BarChart3 size={20} />
+
+            </div>
+
+
+            <div
+              style={{
+                padding: "25px",
+                height: "300px",
+                display: "flex",
+                alignItems: "end",
+                gap: "18px",
+              }}
+            >
+
+              {forecast.map((value, index) => {
+
+                const height =
+                  (value / maxValue) * 210;
+
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      flex: 1,
+                      height: "240px",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "end",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+
+                    <strong
+                      style={{
+                        fontSize: "10px",
+                        color: "#526074",
+                      }}
+                    >
+                      {value.toLocaleString()}
+                    </strong>
+
+                    <div
+                      style={{
+                        width: "65%",
+                        height: `${height}px`,
+                        background: "#1672d3",
+                        borderRadius: "6px 6px 0 0",
+                        transition: "0.4s",
+                      }}
+                    ></div>
+
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        color: "#8b95a6",
+                      }}
+                    >
+                      {months[index]}
+                    </span>
+
+                  </div>
+                );
+              })}
+
+            </div>
+
+          </div>
+
+
+          {/* AI RECOMMENDATION */}
+          <div
+            className="forecast-recommendation"
+            style={{ marginTop: "20px" }}
           >
-            <TrendingUp size={18} />
-            Analyze Demand
-          </button>
-
-        </form>
-
-      </div>
-
-
-      {/* Results */}
-
-      {result && (
-
-        <div className="forecast-results">
-
-          <div className="result-header">
-
-            <div>
-              <h3>Cargo Demand Forecast</h3>
-
-              <p>
-                {formData.cargo} — Next {formData.period} Days
-              </p>
-            </div>
-
-            <span className="prediction-badge">
-              AI Prediction
-            </span>
-
-          </div>
-
-
-          <div className="result-cards">
-
-            <div className="result-card highlight">
-
-              <div className="result-icon">
-                <Package size={21} />
-              </div>
-
-              <span>Demand Level</span>
-
-              <h2>{result.demand}</h2>
-
-              <small>Expected market demand</small>
-
-            </div>
-
-
-            <div className="result-card">
-
-              <div className="result-icon">
-                <Package size={21} />
-              </div>
-
-              <span>Expected Demand</span>
-
-              <h2>
-                {result.expected.toLocaleString()} T
-              </h2>
-
-              <small>Forecasted quantity</small>
-
-            </div>
-
-
-            <div className="result-card">
-
-              <div className="result-icon">
-                <TrendingUp size={21} />
-              </div>
-
-              <span>Demand Growth</span>
-
-              <h2>+{result.growth}%</h2>
-
-              <small>Expected growth</small>
-
-            </div>
-
-
-            <div className="result-card">
-
-              <div className="result-icon warning">
-                <AlertTriangle size={21} />
-              </div>
-
-              <span>Demand Risk</span>
-
-              <h2>{result.risk}</h2>
-
-              <small>Market demand risk</small>
-
-            </div>
-
-          </div>
-
-
-          {/* AI Recommendation */}
-
-          <div className="forecast-recommendation">
 
             <div className="recommendation-icon">
               🤖
@@ -262,26 +322,67 @@ function CargoDemand() {
 
             <div>
 
-              <span>AI DEMAND RECOMMENDATION</span>
-
-              <h3>
-                Prepare for {result.demand.toLowerCase()} demand
-              </h3>
+              <h4>AI Demand Recommendation</h4>
 
               <p>
-                The system estimates approximately{" "}
-                {result.expected.toLocaleString()} tons of{" "}
-                {formData.cargo} demand over the next{" "}
-                {formData.period} days, with an expected
-                growth of {result.growth}%.
+                Demand for <strong>{cargo}</strong> is expected to
+                increase over the coming months. Consider securing
+                vessel capacity and procurement contracts early to
+                reduce exposure to future freight rate increases.
               </p>
 
             </div>
 
           </div>
 
-        </div>
 
+          {/* OPERATIONAL INSIGHTS */}
+          <div
+            className="panel"
+            style={{ marginTop: "20px" }}
+          >
+
+            <div className="panel-header">
+
+              <div>
+                <h3>Operational Insights</h3>
+                <p>Recommended planning actions</p>
+              </div>
+
+            </div>
+
+
+            <div className="status-list">
+
+              <div>
+                <Calendar size={16} />
+                Procurement Planning
+                <strong>Start Early</strong>
+              </div>
+
+              <div>
+                <Ship size={16} />
+                Vessel Capacity
+                <strong>Reserve</strong>
+              </div>
+
+              <div>
+                <TrendingUp size={16} />
+                Demand Trend
+                <strong>Increasing</strong>
+              </div>
+
+              <div>
+                <CheckCircle size={16} />
+                Forecast Status
+                <strong>Reliable</strong>
+              </div>
+
+            </div>
+
+          </div>
+
+        </>
       )}
 
     </div>

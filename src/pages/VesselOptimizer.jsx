@@ -1,38 +1,34 @@
 import { useState } from "react";
-import { Ship, Calculator, CheckCircle } from "lucide-react";
+import {
+  Ship,
+  Package,
+  MapPin,
+  Anchor,
+  Brain,
+  CheckCircle
+} from "lucide-react";
 
 function VesselOptimizer() {
 
-  const [formData, setFormData] = useState({
-    cargo: "",
-    quantity: "",
-    origin: "",
-    destination: ""
+  const [form, setForm] = useState({
+    cargo: "Coal",
+    quantity: "50000",
+    origin: "Australia",
+    destination: "Krishnapatnam"
   });
 
   const [result, setResult] = useState(null);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setForm({
+      ...form,
       [e.target.name]: e.target.value
     });
   };
 
-  const optimizeVessel = (e) => {
-    e.preventDefault();
+  const optimizeVessel = () => {
 
-    if (
-      !formData.cargo ||
-      !formData.quantity ||
-      !formData.origin ||
-      !formData.destination
-    ) {
-      alert("Please fill all the fields");
-      return;
-    }
-
-    const quantity = Number(formData.quantity);
+    const quantity = Number(form.quantity);
 
     let vessel;
     let capacity;
@@ -58,7 +54,10 @@ function VesselOptimizer() {
       charterCost = 1450000;
     }
 
-    const utilization = ((quantity / capacity) * 100).toFixed(1);
+    const utilization = Math.min(
+      ((quantity / capacity) * 100),
+      100
+    ).toFixed(1);
 
     setResult({
       vessel,
@@ -70,223 +69,268 @@ function VesselOptimizer() {
   };
 
   return (
-    <div className="forecast-page">
+    <div className="page-container">
 
-      {/* Header */}
+      {/* PAGE HEADER */}
 
-      <div className="page-title">
+      <div className="page-header">
 
         <div>
           <h2>Vessel Optimizer</h2>
 
           <p>
-            Find the most suitable vessel based on cargo
-            requirements and shipment conditions.
+            Find the most suitable vessel size for your
+            bulk cargo shipment.
           </p>
         </div>
 
-        <div className="forecast-status">
-          <span></span>
-          AI Optimizer Active
+        <div className="page-header-icon">
+          <Ship size={28} />
         </div>
 
       </div>
 
 
-      {/* Input Card */}
+      {/* INPUT PANEL */}
 
-      <div className="forecast-card">
+      <div className="panel">
 
-        <h3>Shipment Requirements</h3>
+        <div className="panel-header">
 
-        <p className="card-description">
-          Enter cargo and route details to identify the
-          optimal vessel.
-        </p>
+          <div>
+            <h3>Shipment Details</h3>
 
-        <form onSubmit={optimizeVessel}>
+            <p>
+              Enter cargo and route information to optimize
+              vessel selection.
+            </p>
+          </div>
 
-          <div className="form-grid">
-
-            <div className="form-group">
-
-              <label>Cargo Type</label>
-
-              <select
-                name="cargo"
-                value={formData.cargo}
-                onChange={handleChange}
-              >
-
-                <option value="">Select cargo</option>
-                <option value="Coal">Coal</option>
-                <option value="Iron Ore">Iron Ore</option>
-                <option value="Fertilizer">Fertilizer</option>
-                <option value="Grain">Grain</option>
-
-              </select>
-
-            </div>
+        </div>
 
 
-            <div className="form-group">
+        <div className="form-grid">
 
-              <label>Cargo Quantity (Tons)</label>
+          {/* Cargo */}
 
-              <input
-                type="number"
-                name="quantity"
-                placeholder="Example: 50000"
-                value={formData.quantity}
-                onChange={handleChange}
-              />
+          <div className="form-group">
 
-            </div>
+            <label>
+              <Package size={14} />
+              Cargo Type
+            </label>
 
-
-            <div className="form-group">
-
-              <label>Origin Country</label>
-
-              <select
-                name="origin"
-                value={formData.origin}
-                onChange={handleChange}
-              >
-
-                <option value="">Select origin</option>
-                <option value="Australia">Australia</option>
-                <option value="Indonesia">Indonesia</option>
-                <option value="South Africa">
-                  South Africa
-                </option>
-                <option value="Brazil">Brazil</option>
-
-              </select>
-
-            </div>
-
-
-            <div className="form-group">
-
-              <label>Destination Port</label>
-
-              <select
-                name="destination"
-                value={formData.destination}
-                onChange={handleChange}
-              >
-
-                <option value="">Select port</option>
-                <option value="Ennore">Ennore</option>
-                <option value="Krishnapatnam">
-                  Krishnapatnam
-                </option>
-                <option value="Visakhapatnam">
-                  Visakhapatnam
-                </option>
-                <option value="Paradip">Paradip</option>
-
-              </select>
-
-            </div>
+            <select
+              name="cargo"
+              value={form.cargo}
+              onChange={handleChange}
+            >
+              <option>Coal</option>
+              <option>Iron Ore</option>
+              <option>Limestone</option>
+              <option>Grain</option>
+              <option>Fertilizer</option>
+            </select>
 
           </div>
 
 
-          <button
-            type="submit"
-            className="generate-btn"
-          >
-            <Calculator size={18} />
-            Optimize Vessel
-          </button>
+          {/* Quantity */}
 
-        </form>
+          <div className="form-group">
+
+            <label>
+              <Package size={14} />
+              Cargo Quantity (Tons)
+            </label>
+
+            <input
+              type="number"
+              name="quantity"
+              value={form.quantity}
+              onChange={handleChange}
+              placeholder="Enter quantity"
+            />
+
+          </div>
+
+
+          {/* Origin */}
+
+          <div className="form-group">
+
+            <label>
+              <MapPin size={14} />
+              Origin Country
+            </label>
+
+            <select
+              name="origin"
+              value={form.origin}
+              onChange={handleChange}
+            >
+              <option>Australia</option>
+              <option>Indonesia</option>
+              <option>South Africa</option>
+              <option>Brazil</option>
+              <option>USA</option>
+            </select>
+
+          </div>
+
+
+          {/* Destination */}
+
+          <div className="form-group">
+
+            <label>
+              <Anchor size={14} />
+              Destination Port
+            </label>
+
+            <select
+              name="destination"
+              value={form.destination}
+              onChange={handleChange}
+            >
+              <option>Krishnapatnam</option>
+              <option>Ennore</option>
+              <option>Visakhapatnam</option>
+              <option>Paradip</option>
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <button
+          className="primary-btn"
+          onClick={optimizeVessel}
+        >
+          <Ship size={18} />
+          Optimize Vessel
+        </button>
 
       </div>
 
 
-      {/* Result */}
+      {/* RESULT */}
 
       {result && (
 
-        <div className="forecast-results">
+        <div className="optimizer-results">
 
           <div className="result-header">
 
             <div>
-              <h3>Vessel Optimization Result</h3>
+              <h3>Vessel Recommendation</h3>
 
               <p>
-                {formData.origin} → {formData.destination}
+                AI-based vessel suitability analysis
               </p>
             </div>
 
-            <span className="prediction-badge">
-              AI Recommendation
-            </span>
+            <div className="ai-status">
+              <Brain size={18} />
+              AI Analysis Complete
+            </div>
 
           </div>
 
 
-          <div className="result-cards">
+          {/* MAIN RECOMMENDATION */}
 
-            <div className="result-card highlight">
+          <div className="vessel-main-card">
 
-              <div className="result-icon">
-                <Ship size={21} />
-              </div>
+            <div className="vessel-main-icon">
+              <Ship size={35} />
+            </div>
 
-              <span>Recommended Vessel</span>
+            <div className="vessel-main-info">
+
+              <span>RECOMMENDED VESSEL</span>
 
               <h2>{result.vessel}</h2>
 
-              <small>
-                Capacity: {result.capacity.toLocaleString()} tons
-              </small>
+              <p>
+                Best suited for {form.quantity} tons of{" "}
+                {form.cargo} from {form.origin} to{" "}
+                {form.destination}.
+              </p>
 
             </div>
 
+            <div className="suitability">
+
+              <strong>{result.score}%</strong>
+
+              <span>Suitability</span>
+
+            </div>
+
+          </div>
+
+
+          {/* RESULT CARDS */}
+
+          <div className="result-grid">
 
             <div className="result-card">
 
-              <div className="result-icon">
-                <CheckCircle size={21} />
+              <div className="result-icon blue">
+                <Ship size={22} />
               </div>
 
-              <span>Suitability Score</span>
+              <span>Vessel Capacity</span>
 
-              <h2>{result.score}%</h2>
+              <h2>
+                {(result.capacity / 1000).toFixed(0)}K
+              </h2>
 
-              <small>
-                Vessel suitability
-              </small>
+              <small>DWT</small>
 
             </div>
 
 
             <div className="result-card">
 
-              <div className="result-icon">
-                <Ship size={21} />
+              <div className="result-icon green">
+                <CheckCircle size={22} />
               </div>
 
               <span>Cargo Utilization</span>
 
-              <h2>{result.utilization}%</h2>
+              <h2>
+                {result.utilization}%
+              </h2>
 
-              <small>
-                Vessel capacity utilized
-              </small>
+              <small>Capacity utilization</small>
 
             </div>
 
 
             <div className="result-card">
 
-              <div className="result-icon">
-                💰
+              <div className="result-icon orange">
+                <Package size={22} />
+              </div>
+
+              <span>Cargo Quantity</span>
+
+              <h2>
+                {(Number(form.quantity) / 1000).toFixed(0)}K
+              </h2>
+
+              <small>Metric tons</small>
+
+            </div>
+
+
+            <div className="result-card">
+
+              <div className="result-icon red">
+                <Anchor size={22} />
               </div>
 
               <span>Estimated Charter Cost</span>
@@ -295,37 +339,36 @@ function VesselOptimizer() {
                 ₹{(result.charterCost / 100000).toFixed(1)}L
               </h2>
 
-              <small>
-                Demo estimate
-              </small>
+              <small>Estimated cost</small>
 
             </div>
 
           </div>
 
 
-          {/* Recommendation */}
+          {/* AI RECOMMENDATION */}
 
           <div className="forecast-recommendation">
 
             <div className="recommendation-icon">
-              🤖
+              <Brain size={24} />
             </div>
 
             <div>
 
-              <span>AI VESSEL RECOMMENDATION</span>
+              <span>AI RECOMMENDATION</span>
 
               <h3>
-                Select {result.vessel} vessel
+                Charter {result.vessel} Vessel
               </h3>
 
               <p>
-                Based on the entered cargo quantity of{" "}
-                {Number(formData.quantity).toLocaleString()} tons,
-                the {result.vessel} vessel provides an estimated{" "}
-                {result.utilization}% capacity utilization with a
-                suitability score of {result.score}%.
+                The {result.vessel} vessel provides an
+                estimated {result.utilization}% cargo
+                utilization with a suitability score of{" "}
+                {result.score}%. This option offers a
+                balanced combination of capacity and
+                estimated charter cost.
               </p>
 
             </div>
